@@ -60,6 +60,8 @@ jobs:
 
     - name: Update version
       run: |
+        npm install --global xml-js
+        npm install --global xml2js
         node ./bump_version.js ${{ steps.bump_version.outputs.next-version }}
     - name: Launch commit
       uses: EndBug/add-and-commit@v8
