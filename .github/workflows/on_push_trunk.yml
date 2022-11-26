@@ -11,7 +11,7 @@ on:
 
 env:
   NODE_VERSION: 14.17.3
-  REPOSITORY: ruluzor/ci-angular-netcore-project
+  REPOSITORY: ruluzor/odeslad-blog
 
 jobs:
   run-scripts:
