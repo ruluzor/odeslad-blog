@@ -1,0 +1,84 @@
+name: On push trunk
+
+on:
+  push:
+    branches:
+      - 'trunk'
+    paths-ignore:
+      - 'app/package.json'
+      - 'app/package-lock.json'
+      - 'api/api.csproj'
+
+env:
+  NODE_VERSION: 14.17.3
+  REPOSITORY: ruluzor/ci-angular-netcore-project
+
+jobs:
+  run-scripts:
+    name: Run scripts
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Branch protection OFF
+      uses: octokit/request-action@v2.x
+      with:
+        route: PUT /repos/:repository/branches/trunk/protection
+        repository: ${{ github.repository }}
+        required_status_checks: |
+          null
+        enforce_admins: |
+          null
+        required_pull_request_reviews: |
+          null
+        restrictions: |
+          null
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN_ACTION }}
+
+    - name: Checkout files
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ env.REPOSITORY }}
+        ref: trunk
+        token: ${{ secrets.TOKEN_ACTION }}
+
+    - name: Install node
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Get current version environment
+      run: |
+        bash -c "node ./current_version.js '${{ github.event.head_commit.message }}' current_version >> $GITHUB_ENV"
+        bash -c "node ./current_version.js '${{ github.event.head_commit.message }}' version_fragment >> $GITHUB_ENV"
+    - name: Bump version
+      id: bump_version
+      uses: christian-draeger/increment-semantic-version@1.0.3
+      with:
+        current-version: ${{ env.current_version }}
+        version-fragment: ${{ env.version_fragment }}
+
+    - name: Update version
+      run: |
+        node ./bump_version.js ${{ steps.bump_version.outputs.next-version }}
+    - name: Launch commit
+      uses: EndBug/add-and-commit@v8
+      with:
+        author_name: CI
+        message: "New SNAPSHOT: v${{ steps.bump_version.outputs.next-version }}"
+
+    - name: Branch protection ON
+      uses: octokit/request-action@v2.x
+      with:
+        route: PUT /repos/:repository/branches/trunk/protection
+        repository: ${{ github.repository }}
+        required_status_checks: |
+          null
+        enforce_admins: |
+          true
+        required_pull_request_reviews: |
+          required_approving_review_count: 0
+        restrictions: |
+          null
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN_ACTION }}

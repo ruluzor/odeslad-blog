@@ -1,0 +1,74 @@
+name: On pull request in any branch
+
+on:
+  pull_request:
+    branches:
+      - '**'
+    types: [review_requested, synchronize, ready_for_review, opened, reopened]
+
+env:
+  NODE_VERSION: 14.17.3
+  DOTNET_VERSION: 6.0.402
+
+jobs:
+
+  build-app:
+
+    name: Build App
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    steps:
+
+    - name: Checkout files
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install packages
+      working-directory: ./app
+      run: npm ci
+
+    - name: Build app
+      working-directory: ./app
+      run: npm run build --if-present
+
+    - name: Run tests
+      working-directory: ./app
+      run: npm run test --if-present
+
+  build-api:
+
+    name: Build Api
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    steps:
+
+    - name: Checkout files
+      uses: actions/checkout@v2
+
+    - name: Setup .NET api
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies api
+      working-directory: ./api
+      run: dotnet restore
+
+    - name: Build api
+      working-directory: ./api
+      run: dotnet build --configuration Release
+
+    - name: Run tests api
+      working-directory: ./api
+      run: dotnet test --no-build --verbosity normal
+
+    - name: Publish api
+      working-directory: ./api
+      run: dotnet publish --configuration Release -o ./dist
