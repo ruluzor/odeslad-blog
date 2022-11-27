@@ -147,7 +147,7 @@ jobs:
       run: dotnet build --configuration Release
 
     - name: Run tests api
-      working-directory: ./api/tests
+      working-directory: ./api/Tests
       run: dotnet test --no-build --verbosity normal
 
     - name: Publish api
