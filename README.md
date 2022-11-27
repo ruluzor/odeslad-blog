@@ -36,3 +36,12 @@ For deploy the app Angular project in Azure is necessary create an Account in Az
     ```
 
 - In Azure **Configuration > General settings > Startup command** put: ngx serve -s
+
+## Create database
+
+For create database its necessary create the models, context and connection string. Then use:
+
+```dotnetcli
+    dotnet ef migrations add 'name_migration'
+    dotnet ef update database
+```
