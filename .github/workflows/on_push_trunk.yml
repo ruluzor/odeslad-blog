@@ -152,7 +152,7 @@ jobs:
 
     - name: Publish api
       working-directory: ./api
-      run: dotnet publish --configuration Release --framework net6.0 -r linux-x64 --self-contained false -o ./dist
+      run: dotnet publish --configuration Release --framework net6.0 --self-contained false -o ./dist
 
     - name: Deploy to Azure
       id: deploy-to-webapi
