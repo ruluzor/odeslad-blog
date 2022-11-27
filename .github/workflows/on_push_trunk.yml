@@ -12,9 +12,9 @@ on:
 env:
   NODE_VERSION: 14.17.3
   REPOSITORY: ruluzor/odeslad-blog
-  AZURE_WEBAPP_NAME: app
+  AZURE_WEBAPP_NAME: odeslad-blog-app
   AZURE_WEBAPP_PACKAGE_PATH: './app/dist/'
-  AZURE_WEBAPI_NAME: api
+  AZURE_WEBAPI_NAME: odeslad-blog-api
   AZURE_WEBAPI_PACKAGE_PATH: './api/dist/'
 
 jobs:
