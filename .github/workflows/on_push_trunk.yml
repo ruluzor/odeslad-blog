@@ -12,6 +12,10 @@ on:
 env:
   NODE_VERSION: 14.17.3
   REPOSITORY: ruluzor/odeslad-blog
+  AZURE_WEBAPP_NAME: app
+  AZURE_WEBAPP_PACKAGE_PATH: './app/dist/'
+  AZURE_WEBAPI_NAME: api
+  AZURE_WEBAPI_PACKAGE_PATH: './api/dist/'
 
 jobs:
   run-scripts:
@@ -84,3 +88,76 @@ jobs:
           null
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN_ACTION }}
+
+  deploy-app:
+    name: Deploy app
+    needs: run-scripts
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout files
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install packages
+      working-directory: ./app
+      run: npm ci
+
+    - name: Build app
+      working-directory: ./app
+      run: npm run build --if-present
+
+    - name: Run tests
+      working-directory: ./app
+      run: npm run test --if-present
+
+    - name: Deploy to Azure
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_SETTINGS }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+  deploy-api:
+    name: Deploy api
+    needs: run-scripts
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout files
+      uses: actions/checkout@v2
+
+    - name: Setup .NET api
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies api
+      working-directory: ./api
+      run: dotnet restore
+
+    - name: Build api
+      working-directory: ./api
+      run: dotnet build --configuration Release
+
+    - name: Run tests api
+      working-directory: ./api
+      run: dotnet test --no-build --verbosity normal
+
+    - name: Publish api
+      working-directory: ./api
+      run: dotnet publish --configuration Release -o ./dist
+
+    - name: Deploy to Azure
+      id: deploy-to-webapi
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPI_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPI_PUBLISH_SETTINGS }}
+        package: ${{ env.AZURE_WEBAPI_PACKAGE_PATH }}
