@@ -58,17 +58,17 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: Restore dependencies api
-      working-directory: ./api
+      working-directory: ./api/api
       run: dotnet restore
 
     - name: Build api
-      working-directory: ./api
+      working-directory: ./api/api
       run: dotnet build --configuration Release
 
     - name: Run tests api
-      working-directory: ./api
+      working-directory: ./api/tests
       run: dotnet test --no-build --verbosity normal
 
     - name: Publish api
-      working-directory: ./api
+      working-directory: ./api/api
       run: dotnet publish --configuration Release -o ./dist
