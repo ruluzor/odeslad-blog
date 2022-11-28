@@ -6,8 +6,8 @@ namespace api.Repositories
     {
         IEnumerable<User> GetAll();
         User GetById(int id);
-        void Create(User model);
-        void Update(int id, User model);
+        User Create(User model);
+        User Update(int id, User model);
         void Delete(int id);
     }
 }

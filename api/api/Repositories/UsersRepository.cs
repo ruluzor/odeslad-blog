@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using api.Models;
 
 namespace api.Repositories
@@ -19,33 +18,36 @@ namespace api.Repositories
 
         public User GetById(int id)
         {
-            return GetUser(id);
-        }
-
-        public void Create(User model)
-        {
-            if (_context.Users.Any(x => x.Email == model.Email))
+            try
             {
-                throw new Exception("User with the email '" + model.Email + "' already exists");
+                return GetUser(id);
             }
-            model.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
-            _context.Users.Add(model);
-            _context.SaveChanges();
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
-        public void Update(int id, User model)
+        public User Create(User model)
+        {
+            ValidateEMailForCreate(model);
+            model.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
+            var result = _context.Users.Add(model);
+            _context.SaveChanges();
+            return result.Entity;
+        }
+
+        public User Update(int id, User model)
         {
             var user = GetUser(id);
-            if (model.Email != user.Email && _context.Users.Any(x => x.Email == model.Email))
-            {
-                throw new Exception("User with the email '" + model.Email + "' already exists");
-            }
+            ValidateEMailForUpdate(model, user);
             if (!string.IsNullOrEmpty(model.PasswordHash))
             {
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
             }
-            _context.Users.Update(user);
+            var result = _context.Users.Update(user);
             _context.SaveChanges();
+            return result.Entity;
         }
 
         public void Delete(int id)
@@ -63,6 +65,22 @@ namespace api.Repositories
                 throw new KeyNotFoundException("User not found");
             }
             return user;
+        }
+
+        private void ValidateEMailForUpdate(User model, User user)
+        {
+            if (model.Email != user.Email && _context.Users.Any(x => x.Email == model.Email))
+            {
+                throw new Exception("User with the email '" + model.Email + "' already exists");
+            }
+        }
+
+        private void ValidateEMailForCreate(User model)
+        {
+            if (_context.Users.Any(x => x.Email == model.Email))
+            {
+                throw new Exception("User with the email '" + model.Email + "' already exists");
+            }
         }
     }
 
