@@ -1,4 +1,4 @@
-namespace Models;
+namespace api.Models;
 
 public enum Role
 {
