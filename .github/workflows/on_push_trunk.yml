@@ -15,7 +15,7 @@ env:
   AZURE_WEBAPP_NAME: odeslad-blog-app
   AZURE_WEBAPP_PACKAGE_PATH: './app/dist/app'
   AZURE_WEBAPI_NAME: odeslad-blog-api
-  AZURE_WEBAPI_PACKAGE_PATH: './api/dist/'
+  AZURE_WEBAPI_PACKAGE_PATH: './api/api/dist/'
 
 jobs:
   run-scripts:
@@ -139,19 +139,19 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: Restore dependencies api
-      working-directory: ./api
+      working-directory: ./api/api
       run: dotnet restore
 
     - name: Build api
-      working-directory: ./api
+      working-directory: ./api/api
       run: dotnet build --configuration Release
 
     - name: Run tests api
-      working-directory: ./api
+      working-directory: ./api/Tests
       run: dotnet test --no-build --verbosity normal
 
     - name: Publish api
-      working-directory: ./api
+      working-directory: ./api/api
       run: dotnet publish --configuration Release --framework net6.0 --self-contained false -o ./dist
 
     - name: Deploy to Azure
