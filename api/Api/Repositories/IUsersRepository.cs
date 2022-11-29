@@ -4,10 +4,10 @@ namespace Api.Repositories
 {
     public interface IUsersRepository
     {
-        IEnumerable<User> GetAll();
-        User GetById(int id);
-        User Create(User model);
-        User Update(int id, User model);
-        void Delete(int id);
+        Task<List<User>> GetAll();
+        Task<User> GetById(int id);
+        Task<User> Create(User model);
+        Task<User> Update(int id, User model);
+        Task<User> Delete(int id);
     }
 }

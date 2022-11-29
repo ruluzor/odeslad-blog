@@ -1,4 +1,3 @@
-using Tests.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Api.Repositories;
@@ -11,7 +10,7 @@ namespace Tests
         {
             IConfiguration configuration = GetConfiguration();
             services.AddSingleton(configuration);
-            services.AddDbContext<TestContext>();
+            services.AddDbContext<Context>();
             services.AddTransient<IUsersRepository, UsersRepository>();
         }
 

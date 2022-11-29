@@ -1,4 +1,5 @@
 using Api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.Repositories
 {
@@ -11,16 +12,16 @@ namespace Api.Repositories
             _context = context;
         }
 
-        public IEnumerable<User> GetAll()
+        public async Task<List<User>> GetAll()
         {
-            return _context.Users;
+            return await _context.Users.ToListAsync();;
         }
 
-        public User GetById(int id)
+        public async Task<User> GetById(int id)
         {
             try
             {
-                return GetUser(id);
+                return await GetUserAsync(id);
             }
             catch (Exception)
             {
@@ -28,38 +29,40 @@ namespace Api.Repositories
             }
         }
 
-        public User Create(User model)
+        public async Task<User> Create(User model)
         {
             ValidateEMailForCreate(model);
             model.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
             var result = _context.Users.Add(model);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return result.Entity;
         }
 
-        public User Update(int id, User model)
+        public async Task<User> Update(int id, User model)
         {
-            var user = GetUser(id);
+            var user = await GetUserAsync(id);
             ValidateEMailForUpdate(model, user);
             if (!string.IsNullOrEmpty(model.PasswordHash))
             {
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
             }
             var result = _context.Users.Update(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return result.Entity;
         }
 
-        public void Delete(int id)
+        public async Task<User> Delete(int id)
         {
-            var user = GetUser(id);
-            _context.Users.Remove(user);
-            _context.SaveChanges();
+            var user = await GetUserAsync(id);
+            var result =_context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return result.Entity;
+
         }
 
-        private User GetUser(int id)
+        private async Task<User> GetUserAsync(int id)
         {
-            var user = _context.Users.Find(id);
+            var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
                 throw new KeyNotFoundException("User not found");
