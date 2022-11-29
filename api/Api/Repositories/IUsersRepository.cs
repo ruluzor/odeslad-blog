@@ -1,6 +1,6 @@
-using api.Models;
+using Api.Models;
 
-namespace api.Repositories
+namespace Api.Repositories
 {
     public interface IUsersRepository
     {

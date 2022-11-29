@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Api.Models;
 
-namespace api.Repositories;
+namespace Tests.Repositories;
 
 public class TestContext : DbContext
 {
@@ -17,5 +18,5 @@ public class TestContext : DbContext
         options.UseSqlServer(_configuration.GetConnectionString("Test"));
     }
 
-    public DbSet<Models.User> Users { get; set; }
+    public DbSet<User> Users { get; set; }
 }

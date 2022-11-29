@@ -1,7 +1,8 @@
-using api.Repositories;
+using Api.Repositories;
+using Api.Models;
 using Xunit;
 
-namespace tests.Repositories
+namespace Tests.Repositories
 {
     public class UsersRepositoryTest
     {
@@ -77,9 +78,9 @@ namespace tests.Repositories
             Assert.Empty(models);
         }
 
-        private api.Models.User CreateTestUser()
+        private User CreateTestUser()
         {
-            var model = new api.Models.User
+            var model = new User
             {
                 Id = 0,
                 Title = "Rubén",
@@ -87,7 +88,7 @@ namespace tests.Repositories
                 LastName = "Lucas",
                 Email = "rubenlucas@gmail.com",
                 PasswordHash = "1234",
-                Role = api.Models.Role.Admin
+                Role = Role.Admin
             };
             var user = _repository.Create(model);
             return _repository.GetById(user.Id);
