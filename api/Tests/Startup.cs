@@ -1,8 +1,9 @@
-using api.Repositories;
+using Tests.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Api.Repositories;
 
-namespace tests
+namespace Tests
 {
     public class Startup
     {
@@ -10,7 +11,7 @@ namespace tests
         {
             IConfiguration configuration = GetConfiguration();
             services.AddSingleton(configuration);
-            services.AddDbContext<Context>();
+            services.AddDbContext<TestContext>();
             services.AddTransient<IUsersRepository, UsersRepository>();
         }
 
@@ -20,7 +21,5 @@ namespace tests
             configurationBuilder.AddJsonFile("appsettings.json");
             return configurationBuilder.Build();
         }
-
-
     }
 }
