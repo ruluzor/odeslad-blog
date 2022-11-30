@@ -3,12 +3,12 @@ using Api.Repositories;
 
 namespace Api.UseCases.Users
 {
-    public class GetUsersUC : IUseCase<List<User>>
+    public class GetAllUsersUC : IUseCase<List<User>>
     {
 
         public IUsersRepository _repository;
 
-        public GetUsersUC(IUsersRepository repository)
+        public GetAllUsersUC(IUsersRepository repository)
         {
             _repository = repository;
         }

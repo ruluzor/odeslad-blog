@@ -3,14 +3,14 @@ using Api.Repositories;
 
 namespace Api.UseCases.Users
 {
-    public class GetUserByIdUC : IUseCase<User>
+    public class GetByIdUserUC : IUseCase<User>
     {
 
         public IUsersRepository _repository;
 
         public int Id { get; set; }
 
-        public GetUserByIdUC(IUsersRepository repository)
+        public GetByIdUserUC(IUsersRepository repository)
         {
             _repository = repository;
         }

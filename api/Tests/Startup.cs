@@ -1,6 +1,6 @@
+using Api.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Api.Repositories;
 
 namespace Tests
 {
