@@ -1,20 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Api.Repositories;
-
-public class Context : DbContext
+namespace Api.Repositories
 {
-    protected readonly IConfiguration _configuration;
-
-    public Context(IConfiguration configuration)
+    public class Context : DbContext
     {
-        _configuration = configuration;
-    }
+        protected readonly IConfiguration _configuration;
 
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
-    {
-        options.UseSqlServer(_configuration.GetConnectionString("Default"));
-    }
+        public Context(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
-    public DbSet<Models.User> Users { get; set; }
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        {
+            options.UseSqlServer(_configuration.GetConnectionString("Default"));
+        }
+
+        public DbSet<Models.User> Users { get; set; }
+    }
 }

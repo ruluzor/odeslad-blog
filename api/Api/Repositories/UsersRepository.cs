@@ -1,26 +1,29 @@
 using Api.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Api.Repositories
 {
     public class UsersRepository : IUsersRepository
     {
-        private readonly Context _context;
+        private readonly IConfiguration _configuration;
 
-        public UsersRepository(Context context)
+        public UsersRepository(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
         }
 
-        public IEnumerable<User> GetAll()
+        public async Task<List<User>> GetAll()
         {
-            return _context.Users;
+            using Context context = new(_configuration);
+            return await context.Users.ToListAsync();;
         }
 
-        public User GetById(int id)
+        public async Task<User> GetById(int id)
         {
             try
             {
-                return GetUser(id);
+                return await GetUserAsync(id);
             }
             catch (Exception)
             {
@@ -28,60 +31,59 @@ namespace Api.Repositories
             }
         }
 
-        public User Create(User model)
+        public async Task<User> Create(User model)
         {
+            using Context context = new(_configuration);
             ValidateEMailForCreate(model);
             model.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
-            var result = _context.Users.Add(model);
-            _context.SaveChanges();
+            EntityEntry<User> result = context.Users.Add(model);
+            _ = await context.SaveChangesAsync();
             return result.Entity;
         }
 
-        public User Update(int id, User model)
+        public async Task<User> Update(int id, User model)
         {
-            var user = GetUser(id);
+            using Context context = new(_configuration);
+            User user = await GetUserAsync(id);
             ValidateEMailForUpdate(model, user);
-            if (!string.IsNullOrEmpty(model.PasswordHash))
-            {
-                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
-            }
-            var result = _context.Users.Update(user);
-            _context.SaveChanges();
+            EntityEntry<User> result = context.Users.Update(model);
+            _ = await context.SaveChangesAsync();
             return result.Entity;
         }
 
-        public void Delete(int id)
+        public async Task<User> Delete(int id)
         {
-            var user = GetUser(id);
-            _context.Users.Remove(user);
-            _context.SaveChanges();
+            using Context context = new(_configuration);
+            User user = await GetUserAsync(id);
+            EntityEntry<User> result = context.Users.Remove(user);
+            _ = await context.SaveChangesAsync();
+            return result.Entity;
+
         }
 
-        private User GetUser(int id)
+        private async Task<User> GetUserAsync(int id)
         {
-            var user = _context.Users.Find(id);
-            if (user == null)
-            {
-                throw new KeyNotFoundException("User not found");
-            }
-            return user;
+            using Context context = new(_configuration);
+            User user = await context.Users.FindAsync(id);
+            return user ?? throw new KeyNotFoundException("User not found");
         }
 
         private void ValidateEMailForUpdate(User model, User user)
         {
-            if (model.Email != user.Email && _context.Users.Any(x => x.Email == model.Email))
+            using Context context = new(_configuration);
+            if (model.Email != user.Email && context.Users.Any(x => x.Email == model.Email))
             {
-                throw new Exception("User with the email '" + model.Email + "' already exists");
+                throw new InvalidOperationException("User with the email '" + model.Email + "' already exists");
             }
         }
 
         private void ValidateEMailForCreate(User model)
         {
-            if (_context.Users.Any(x => x.Email == model.Email))
+            using Context context = new(_configuration);
+            if (context.Users.Any(x => x.Email == model.Email))
             {
-                throw new Exception("User with the email '" + model.Email + "' already exists");
+                throw new InvalidOperationException("User with the email '" + model.Email + "' already exists");
             }
         }
     }
-
 }

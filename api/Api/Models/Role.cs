@@ -1,7 +1,8 @@
-namespace Api.Models;
-
-public enum Role
+namespace Api.Models
 {
-    Admin,
-    User
+    public enum Role
+    {
+        Admin,
+        User
+    }
 }
