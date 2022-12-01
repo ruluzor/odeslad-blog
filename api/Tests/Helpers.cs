@@ -12,8 +12,8 @@ namespace Tests
                 new User()
                 {
                     Id = 1,
-                    Title = "Test 1",
-                    PasswordHash = "1234"
+                    Title = "Rubén",
+                    PasswordHash = "$2a$11$0pJV5Xx0curItzOhLTIc2eXreV.xif37D2pGY2zMuO0g9vFeOkv76"
                 },
                 new User()
                 {
@@ -21,6 +21,16 @@ namespace Tests
                     Title = "Test 2",
                     PasswordHash = "1234"
                 }
+            };
+        }
+
+         public static User GetMockLoginUser()
+        {
+            return new User()
+            {
+                Id = 1,
+                Title = "Rubén",
+                PasswordHash = "1234"
             };
         }
 

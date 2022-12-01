@@ -18,10 +18,10 @@ namespace Tests.Controllers
 
             AuthenticationController controller = new(mockRepository.Object, Helpers.GetConfiguration());
 
-            ObjectResult result = await controller.Login(Helpers.GetMockListUsers()[0]) as ObjectResult;
+            ObjectResult result = await controller.Login(Helpers.GetMockLoginUser()) as ObjectResult;
 
-            _ = Assert.IsType<UnauthorizedObjectResult>(result);
-            Assert.Equal(HttpStatusCode.Unauthorized, (HttpStatusCode)result.StatusCode);
+            _ = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
 
             mockRepository.Verify(c => c.GetAll(), Times.Once);
         }
