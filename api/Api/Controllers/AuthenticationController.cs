@@ -5,8 +5,6 @@ using Api.Repositories;
 using Api.UseCases.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Controllers
 {
@@ -41,12 +39,6 @@ namespace Api.Controllers
             {
                 return Unauthorized(ex.Message);
             }
-        }
-
-        [HttpGet("logout")]
-        public IActionResult Logout()
-        {
-            return Ok("logout ok");
         }
     }
 }
