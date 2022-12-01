@@ -1,15 +1,17 @@
 using Api.Models;
 using Api.Repositories;
 using Api.UseCases.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
-        private IUsersRepository _repository;
+        private readonly IUsersRepository _repository;
 
         public UsersController(IUsersRepository repository)
         {
@@ -35,6 +37,7 @@ namespace Api.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Create(User model)
         {
