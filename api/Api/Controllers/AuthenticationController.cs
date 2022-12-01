@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using System.Text;
+using Api.Models;
 using Api.Repositories;
+using Api.UseCases.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -23,10 +25,22 @@ namespace Api.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("login")]
-        public IActionResult Login()
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(User model)
         {
-            return Ok(JwtSettings.GetJWTToken(_configuration));
+            try
+            {
+                LoginUC uc = new(_repository, _configuration)
+                {
+                    Model = model
+                };
+                string result = await uc.Execute();
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
         }
 
         [HttpGet("logout")]
