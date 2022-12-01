@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Api.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -32,31 +33,27 @@ namespace Api
             };
         }
 
-        public static string GetJWTToken(IConfiguration configuration)
+        public static string GetJWTToken(IConfiguration configuration, User model)
         {
-            var issuer = configuration["Jwt:Issuer"];
-            var audience = configuration["Jwt:Audience"];
-            var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            string issuer = configuration["Jwt:Issuer"];
+            string audience = configuration["Jwt:Audience"];
+            byte[] key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
+            SecurityTokenDescriptor tokenDescriptor = new()
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim("Id", Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Sub, ""),
-                    new Claim(JwtRegisteredClaimNames.Email, ""),
-                    new Claim(JwtRegisteredClaimNames.Jti,
-                    Guid.NewGuid().ToString())
+                    new Claim("Id", model.Id.ToString()),
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(5),
+                Expires = DateTime.UtcNow.AddMinutes(60),
                 Issuer = issuer,
                 Audience = audience,
                 SigningCredentials = new SigningCredentials
                 (new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha512Signature)
             };
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var result = tokenHandler.WriteToken(token);
+            JwtSecurityTokenHandler tokenHandler = new();
+            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+            string result = tokenHandler.WriteToken(token);
             return result;
         }
     }

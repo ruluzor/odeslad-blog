@@ -20,21 +20,18 @@ namespace Api.UseCases.Users
 
         public async Task<string> Execute()
         {
-            var users = await _repository.GetAll();
-            if (Exist(users))
+            User user = GetExistingUser(await _repository.GetAll());
+            if (user != null)
             {
-                return JwtSettings.GetJWTToken(_configuration);
+                return JwtSettings.GetJWTToken(_configuration, user);
             }
             throw new UnauthorizedAccessException("Unauthorized");
         }
 
-        private bool Exist(List<User> users)
+        private User GetExistingUser(List<User> users)
         {
-            if (users.Find(x => x.Title == Model.Title && x.PasswordHash == BCrypt.Net.BCrypt.HashPassword(Model.PasswordHash)) != null)
-            {
-                return true;
-            }
-            return false;
+            User user = users.Find(x => x.Title == Model.Title && BCrypt.Net.BCrypt.Verify(Model.PasswordHash, x.PasswordHash));
+            return user ?? null;
         }
     }
 }

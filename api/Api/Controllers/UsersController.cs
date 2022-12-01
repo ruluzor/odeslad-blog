@@ -37,6 +37,7 @@ namespace Api.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Create(User model)
         {
