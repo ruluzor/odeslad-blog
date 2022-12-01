@@ -6,19 +6,12 @@ namespace Tests
 {
     public class Startup
     {
-        public void ConfigureServices(IServiceCollection services)
+        public static void ConfigureServices(IServiceCollection services)
         {
-            IConfiguration configuration = GetConfiguration();
+            IConfiguration configuration = Helpers.GetConfiguration();
             services.AddSingleton(configuration);
             services.AddDbContext<Context>();
             services.AddTransient<IUsersRepository, UsersRepository>();
-        }
-
-        private IConfiguration GetConfiguration()
-        {
-            var configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.AddJsonFile("appsettings.json");
-            return configurationBuilder.Build();
         }
     }
 }
