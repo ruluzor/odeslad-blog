@@ -9,6 +9,7 @@ Api/dist/
 Tests/bin/
 Tests/obj/
 Tests/dist/
+dist/
 
 # Common node modules locations
 /node_modules
