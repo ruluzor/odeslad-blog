@@ -26,8 +26,9 @@ namespace Api
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidateLifetime = false,
-                ValidateIssuerSigningKey = true
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.Zero,
             };
         }
 
@@ -53,7 +54,7 @@ namespace Api
                 (new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha512Signature)
             };
-            var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+            var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var result = tokenHandler.WriteToken(token);
             return result;

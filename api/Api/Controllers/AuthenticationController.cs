@@ -13,8 +13,8 @@ namespace Api.Controllers
     [Route("api/[controller]")]
     public class AuthenticationController : Controller
     {
-        private IUsersRepository _repository;
-        private IConfiguration _configuration;
+        private readonly IUsersRepository _repository;
+        private readonly IConfiguration _configuration;
 
         public AuthenticationController(IUsersRepository repository, IConfiguration configuration)
         {
@@ -30,7 +30,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("logout")]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
             return Ok("logout ok");
         }

@@ -11,7 +11,7 @@ namespace Api.Controllers
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
-        private IUsersRepository _repository;
+        private readonly IUsersRepository _repository;
 
         public UsersController(IUsersRepository repository)
         {
