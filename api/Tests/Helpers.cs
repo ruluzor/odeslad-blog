@@ -5,22 +5,33 @@ namespace Tests
 {
     public class Helpers
     {
-        public static List<User> GetMockListUsers()
+        public static List<User> GetMockDbListUsers()
         {
             return new List<User>
             {
                 new User()
                 {
                     Id = 1,
-                    Title = "Rubén",
-                    PasswordHash = "$2a$11$0pJV5Xx0curItzOhLTIc2eXreV.xif37D2pGY2zMuO0g9vFeOkv76"
+                    Title = "test 1",
+                    PasswordHash = "$2a$11$NI1F7cCSQXndMQa19Aupqu/cUXEfX5VR5RsQnFIUzCrQf2wV1MQLm"
                 },
                 new User()
                 {
                     Id = 2,
-                    Title = "Test 2",
-                    PasswordHash = "1234"
+                    Title = "test 2",
+                    PasswordHash = "$2a$11$NI1F7cCSQXndMQa19Aupqu/cUXEfX5VR5RsQnFIUzCrQf2wV1MQLm"
                 }
+            };
+        }
+
+        public static User GetMockNewUser()
+        {
+            return new User()
+            {
+                Id = 0,
+                Title = "new test",
+                Email = "test@gmail.com",
+                PasswordHash = "1234"
             };
         }
 
@@ -29,16 +40,9 @@ namespace Tests
             return new User()
             {
                 Id = 1,
-                Title = "Rubén",
+                Title = "test 1",
                 PasswordHash = "1234"
             };
-        }
-
-        public static IConfiguration GetConfiguration()
-        {
-            var configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.AddJsonFile("appsettings.json");
-            return configurationBuilder.Build();
         }
     }
 }

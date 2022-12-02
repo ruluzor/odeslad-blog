@@ -1,103 +1,83 @@
 using Api.Repositories;
 using Api.Models;
 using Xunit;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Tests.Repositories
 {
     public class UsersRepositoryTest
     {
-        private readonly IUsersRepository _repository;
 
-        public UsersRepositoryTest(IUsersRepository repository) {
-            _repository = repository;
+        private readonly DbContextOptions<Context> _options;
+
+        public UsersRepositoryTest()
+        {
+            _options = new DbContextOptionsBuilder<Context>()
+                .UseSqlServer(Api.Helpers.GetConfiguration().GetConnectionString("Test")).Options;
         }
 
         [Fact]
         public async Task ShouldGetAll()
         {
-            var user = await CreateTestUser();
-
-            var models = await _repository.GetAll();
-
+            IUsersRepository repository = new UsersRepository(_options);
+            var testUser = await repository.Create(Helpers.GetMockNewUser());
+            var models = await repository.GetAll();
             Assert.NotEmpty(models);
-            await DeleteTestUser(user.Id);
+            await repository.Delete(testUser.Id);
         }
 
         [Fact]
         public async Task ShouldGetNullByIdNotFound()
         {
-            var model = await _repository.GetById(2);
+            IUsersRepository repository = new UsersRepository(_options);
+            var testUser = await repository.Create(Helpers.GetMockNewUser());
+            var model = await repository.GetById(2);
             Assert.Null(model);
+            await repository.Delete(testUser.Id);
         }
 
         [Fact]
         public async Task ShouldGetModelById()
         {
-            var user = await CreateTestUser();
-
-            var model = await _repository.GetById(user.Id);
-
-            Assert.Equal(user.Id, model.Id);
-            await DeleteTestUser(user.Id);
+            IUsersRepository repository = new UsersRepository(_options);
+            var testUser = await repository.Create(Helpers.GetMockNewUser());
+            var model = await repository.GetById(testUser.Id);
+            Assert.Equal(testUser.Id, model.Id);
+            await repository.Delete(testUser.Id);
         }
 
         [Fact]
         public async Task ShouldCreate()
         {
-            var user = await CreateTestUser();
-
-            var models = await _repository.GetAll();
-
-            Assert.NotEmpty(models);
-            await DeleteTestUser(user.Id);
-
+            IUsersRepository repository = new UsersRepository(_options);
+            var testUser = await repository.Create(Helpers.GetMockNewUser());
+            var models = await repository.GetAll();
+            Assert.Single(models);
+            await repository.Delete(testUser.Id);
         }
 
         [Fact]
         public async Task ShouldUpdate()
         {
-            var user = await CreateTestUser();
-            var model = await _repository.GetById(user.Id);
+            IUsersRepository repository = new UsersRepository(_options);
+            var testUser = await repository.Create(Helpers.GetMockNewUser());
+            var model = await repository.GetById(testUser.Id);
             model.Title = "updated";
-
-            var result = await _repository.Update(model.Id, model);
-
-            Assert.Equal("updated", result.Title);
-            await DeleteTestUser(user.Id);
-
+            await repository.Update(testUser.Id, model);
+            model = await repository.GetById(model.Id);
+            Assert.Equal("updated", model.Title);
+            await repository.Delete(testUser.Id);
         }
 
         [Fact]
         public async Task ShouldDelete()
         {
-            var user = await CreateTestUser();
-
-            var result = await _repository.Delete(user.Id);
-
-            var models = await _repository.GetAll();
-            Assert.Equal(result.Id, user.Id);
+            IUsersRepository repository = new UsersRepository(_options);
+            var testUser = await repository.Create(Helpers.GetMockNewUser());
+            await repository.Delete(testUser.Id);
+            var models = await repository.GetAll();
             Assert.Empty(models);
-        }
-
-        private async Task<User> CreateTestUser()
-        {
-            var model = new User
-            {
-                Id = 0,
-                Title = "Rubén",
-                FirstName = "Rubén",
-                LastName = "Lucas",
-                Email = "rubenlucas@gmail.com",
-                PasswordHash = "1234",
-                Role = Role.Admin
-            };
-            var user = await _repository.Create(model);
-            return await _repository.GetById(user.Id);
-        }
-
-        private async Task DeleteTestUser(int id)
-        {
-            await _repository.Delete(id);
         }
     }
 }

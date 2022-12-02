@@ -15,35 +15,25 @@ namespace Tests.Controllers
         public async Task ShouldGetAll()
         {
             Mock<IUsersRepository> mockRepository = new();
-            _ = mockRepository.Setup(p => p.GetAll()).ReturnsAsync(Helpers.GetMockListUsers());
-
+            _ = mockRepository.Setup(p => p.GetAll()).ReturnsAsync(Helpers.GetMockDbListUsers());
             UsersController controller = new(mockRepository.Object);
-
             ObjectResult result = await controller.GetAll() as ObjectResult;
-
             _ = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
-
             mockRepository.Verify(c => c.GetAll(), Times.Once);
-
-            Assert.Equal(Helpers.GetMockListUsers().Count, ((List<User>)result.Value).Count);
+            Assert.Equal(Helpers.GetMockDbListUsers().Count, ((List<User>)result.Value).Count);
         }
 
         [Fact]
         public async Task ShouldGetById()
         {
             Mock<IUsersRepository> mockRepository = new();
-            _ = mockRepository.Setup(p => p.GetById(It.IsAny<int>())).ReturnsAsync(Helpers.GetMockListUsers().First());
-
+            _ = mockRepository.Setup(p => p.GetById(It.IsAny<int>())).ReturnsAsync(Helpers.GetMockDbListUsers().First());
             UsersController controller = new(mockRepository.Object);
-
             ObjectResult result = await controller.GetById(It.IsAny<int>()) as ObjectResult;
-
             _ = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
-
             mockRepository.Verify(c => c.GetById(It.IsAny<int>()), Times.Once);
-
             Assert.Equal(1, ((User)result.Value).Id);
         }
 
@@ -51,17 +41,12 @@ namespace Tests.Controllers
         public async Task ShouldCreate()
         {
             Mock<IUsersRepository> mockRepository = new();
-            _ = mockRepository.Setup(p => p.Create(It.IsAny<User>())).ReturnsAsync(Helpers.GetMockListUsers().First());
-
+            _ = mockRepository.Setup(p => p.Create(It.IsAny<User>())).ReturnsAsync(Helpers.GetMockDbListUsers().First());
             UsersController controller = new(mockRepository.Object);
-
             ObjectResult result = await controller.Create(It.IsAny<User>()) as ObjectResult;
-
             _ = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
-
             mockRepository.Verify(c => c.Create(It.IsAny<User>()), Times.Once);
-
             Assert.Equal(1, ((User)result.Value).Id);
         }
 
@@ -69,17 +54,12 @@ namespace Tests.Controllers
         public async Task ShouldUpdate()
         {
             Mock<IUsersRepository> mockRepository = new();
-            _ = mockRepository.Setup(p => p.Update(It.IsAny<int>(), It.IsAny<User>())).ReturnsAsync(Helpers.GetMockListUsers().First());
-
+            _ = mockRepository.Setup(p => p.Update(It.IsAny<int>(), It.IsAny<User>())).ReturnsAsync(Helpers.GetMockDbListUsers().First());
             UsersController controller = new(mockRepository.Object);
-
             ObjectResult result = await controller.Update(It.IsAny<int>(), It.IsAny<User>()) as ObjectResult;
-
             _ = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
-
             mockRepository.Verify(c => c.Update(It.IsAny<int>(), It.IsAny<User>()), Times.Once);
-
             Assert.Equal(1, ((User)result.Value).Id);
         }
 
@@ -87,19 +67,13 @@ namespace Tests.Controllers
         public async Task ShouldDelete()
         {
             Mock<IUsersRepository> mockRepository = new();
-            _ = mockRepository.Setup(p => p.Delete(It.IsAny<int>())).ReturnsAsync(Helpers.GetMockListUsers().First());
-
+            _ = mockRepository.Setup(p => p.Delete(It.IsAny<int>())).ReturnsAsync(Helpers.GetMockDbListUsers().First());
             UsersController controller = new(mockRepository.Object);
-
             ObjectResult result = await controller.Delete(It.IsAny<int>()) as ObjectResult;
-
             _ = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
-
             mockRepository.Verify(c => c.Delete(It.IsAny<int>()), Times.Once);
-
             Assert.Equal(1, ((User)result.Value).Id);
         }
-
     }
 }

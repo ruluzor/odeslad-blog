@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Add persistence architecture in backend](https://github.com/ruluzor/odeslad-blog/issues/6)
 - [Create Azure deploy](https://github.com/ruluzor/odeslad-blog/issues/7)
 - [Create spike controller and use case in backend](https://github.com/ruluzor/odeslad-blog/issues/23)
+- [Add authentication architecture with JWT in backend](https://github.com/ruluzor/odeslad-blog/issues/25)
 
 ### Changed
 
