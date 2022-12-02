@@ -1,14 +1,15 @@
-using System.Text;
 using Api;
 using Api.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddDbContext<Context>();
+builder.Services.AddDbContext<Context>(options =>
+{
+    options.UseSqlServer(Helpers.GetConfiguration().GetConnectionString("Default"));
+});
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 

@@ -14,15 +14,11 @@ namespace Tests.Controllers
         public async Task ShouldLogin()
         {
             Mock<IUsersRepository> mockRepository = new();
-            _ = mockRepository.Setup(p => p.GetAll()).ReturnsAsync(Helpers.GetMockListUsers());
-
-            AuthenticationController controller = new(mockRepository.Object, Helpers.GetConfiguration());
-
+            _ = mockRepository.Setup(p => p.GetAll()).ReturnsAsync(Helpers.GetMockDbListUsers());
+            AuthenticationController controller = new(mockRepository.Object, Api.Helpers.GetConfiguration());
             ObjectResult result = await controller.Login(Helpers.GetMockLoginUser()) as ObjectResult;
-
             _ = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
-
             mockRepository.Verify(c => c.GetAll(), Times.Once);
         }
     }
