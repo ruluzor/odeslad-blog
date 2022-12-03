@@ -1,8 +1,6 @@
 using Api.Repositories;
-using Api.Models;
 using Xunit;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Tests.Repositories
 {
@@ -13,8 +11,7 @@ namespace Tests.Repositories
 
         public UsersRepositoryTest()
         {
-            _options = new DbContextOptionsBuilder<Context>()
-                .UseSqlServer(Api.Helpers.GetConfiguration().GetConnectionString("Test")).Options;
+            _options = new DbContextOptionsBuilder<Context>().UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
         }
 
         [Fact]
